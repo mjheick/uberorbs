@@ -1,0 +1,107 @@
+[Root]
+Most Recent Package=uberorbs installer
+
+
+[Package|uberorbs installer|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=F:\vbprograms\uberorbs\Package
+
+[Package|uberorbs installer|Configure DAO ISAMs]
+Applicable=No
+
+[Package|uberorbs installer|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|uberorbs installer|Files Found]
+
+[Package|uberorbs installer|Files Released]
+
+[Package|uberorbs installer|Missing Dependency Information]
+
+[Package|uberorbs installer|Out-of-Date Dependency Information]
+C:\WINDOWS\system32\MCI32.OCX=
+
+[Package|uberorbs installer|Files Added]
+F:\vbprograms\uberorbs\ouvrez.wav=
+F:\vbprograms\uberorbs\hit.wav=
+F:\vbprograms\uberorbs\nope.wav=
+F:\vbprograms\uberorbs\ok.wav=
+
+[Package|uberorbs installer|Files Removed]
+
+[Package|uberorbs installer|Files In Project]
+F:\vbprograms\uberorbs\UberOrbs!.exe=Yes
+C:\WINDOWS\system32\msvbvm60.dll=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\WINDOWS\system32\MCI32.OCX=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\WINDOWS\system32\VB6STKIT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+F:\vbprograms\uberorbs\ouvrez.wav=Yes
+F:\vbprograms\uberorbs\hit.wav=Yes
+F:\vbprograms\uberorbs\nope.wav=Yes
+F:\vbprograms\uberorbs\ok.wav=Yes
+
+[Package|uberorbs installer|Configure Registry Files]
+Applicable=No
+
+[Package|uberorbs installer|Configure Remote Servers]
+Applicable=No
+
+[Package|uberorbs installer|Install Locations]
+F:\vbprograms\uberorbs\UberOrbs!.exe=$(AppPath)
+C:\WINDOWS\system32\msvbvm60.dll=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEAUT32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\OLEPRO32.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\ASYCFILT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\STDOLE2.TLB=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\WINDOWS\system32\MCI32.OCX=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\WINDOWS\system32\VB6STKIT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+F:\vbprograms\uberorbs\ouvrez.wav=$(AppPath)
+F:\vbprograms\uberorbs\hit.wav=$(AppPath)
+F:\vbprograms\uberorbs\nope.wav=$(AppPath)
+F:\vbprograms\uberorbs\ok.wav=$(AppPath)
+
+[Package|uberorbs installer|Configure Shared Files]
+Applicable=Yes
+F:\vbprograms\uberorbs\UberOrbs!.exe=No
+F:\vbprograms\uberorbs\ouvrez.wav=No
+F:\vbprograms\uberorbs\hit.wav=No
+F:\vbprograms\uberorbs\nope.wav=No
+F:\vbprograms\uberorbs\ok.wav=No
+
+[Package|uberorbs installer|Distribution]
+Type=single
+Size=
+Title=Unliterate.net - UberOrbs
+
+[Package|uberorbs installer|IconGroups]
+Group0=Unliterate.net
+PrivateGroup0=-1
+Parent0=$(Programs)
+
+[Package|uberorbs installer|Unliterate.net]
+Icon1=UberOrbs!.exe
+Title1=UberOrbs
+StartIn1=$(AppPath)
+Key1=Icon1
+
+[Package|uberorbs installer|Package]
+PackageFolder=F:\vbprograms\uberorbs\Package
+ProjectFolder=F:\vbprograms\uberorbs
+ServerSideCab=
+File1=F:\vbprograms\uberorbs\Package\setup.exe
+File2=F:\vbprograms\uberorbs\Package\Setup.Lst
+File3=F:\vbprograms\uberorbs\Package\UberOrbs!.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz
