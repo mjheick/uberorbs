@@ -94,7 +94,7 @@ function PlayGame()
 	{
 		TotalOrbs = 50;
 	}
-	CreateOrbs(TotalOrbs);
+	CreateOrbs(100); // CreateOrbs(TotalOrbs);
 	ShowOrbs();
 	setTimeout(MoveOrbs, 50); /* 20 refreshes per second */
 }
@@ -215,7 +215,103 @@ function canvasCircle(canvas, x, y, radius, clrRed, clrGreen, clrBlue)
 function MoveOrbs()
 {
 	console.log("MoveOrbs()");
+	let x = 0;
+	for (x = 0; x < TotalOrbs; x++)
+	{
+		if (Orbs[x].State == 1)
+		{
+			Orbs[x].XCoord = Orbs[x].XCoord + (CosOrb(Orbs[x].Angle) * Orbs[x].Speed);
+			Orbs[x].YCoord = Orbs[x].YCoord - (SinOrb(Orbs[x].Angle) * Orbs[x].Speed);
+
+			if (Orbs[x].XCoord <= 0) {
+				Orbs[x].XCoord = 1;
+				Orbs[x].Angle = bounceLeft(Orbs[x].Angle);
+			}
+			if (Orbs[x].XCoord >= ScreenWidth) {
+				Orbs[x].XCoord = ScreenWidth - 1;
+				Orbs[x].Angle = bounceRight(Orbs[x].Angle);
+			}
+			if (Orbs[x].YCoord <= 0) {
+				Orbs[x].YCoord = 1;
+				Orbs[x].Angle = bounceTop(Orbs[x].Angle);
+			}
+			if (Orbs[x].YCoord >= ScreenHeight) {
+				Orbs[x].YCoord = ScreenHeight - 1;
+				Orbs[x].Angle = bounceBottom(Orbs[x].Angle);
+			}
+		}
+	}
+
+	ShowOrbs();
 	/* If we're still in the game we can call ourselves back in 50ms */
-	// setTimeout(MoveOrbs, 50);
+	setTimeout(MoveOrbs, 50);
 	return;
+}
+
+function SinOrb(angle)
+{
+	let rad = Math.sin(angle * (Math.PI / 180));
+	return (Math.pow(rad, 2) * Math.sign(rad));
+}
+
+function CosOrb(angle)
+{
+	let rad = Math.cos(angle * (Math.PI / 180));
+	return (Math.pow(rad, 2) * Math.sign(rad));
+}
+
+function bounceLeft(angle)
+{
+	let ret = 1000;
+	if ((angle > 90) && (angle < 135)) { ret = 90 - (angle - 90); }
+	if (angle == 135) { ret = 45; }
+	if ((angle > 135) && (angle < 180)) { ret = 180 - angle; }
+	if (angle == 180) { ret = 0; }
+	if ((angle > 181) && (angle < 224)) { ret = 360 - (angle - 180); }
+	if (angle == 225) { ret = 315; }
+	if ((angle > 226) && (angle < 269)) { ret = 270 + (270 - angle); }
+	if (ret == 1000) { ret = angle; }
+	return ret;
+}
+
+function bounceRight(angle)
+{
+	let ret = 1000;
+	if ((angle < 90) && (angle > 45)) { ret = 90 + (90 - angle); }
+	if (angle == 45) { ret = 135; }
+	if ((angle < 45) && (angle > 0)) { ret = 180 - angle; }
+	if (angle == 0) { ret = 180; }
+	if ((angle < 360) && (angle > 315)) { ret = 180 + (360 - angle); }
+	if (angle == 315) { ret = 225; }
+	if ((angle < 315) && (angle > 270)) { ret = 270 - (angle - 270); }
+	if (ret == 1000) { ret = angle; }
+	return ret;
+}
+
+function bounceTop(angle)
+{
+	let ret = 1000;
+	if ((angle > 0) && (angle < 45)) { ret = 360 - angle; }
+	if (angle == 45) { ret = 315; }
+	if ((angle > 45) && (angle < 90)) { ret = 270 + (90 - angle); }
+	if (angle == 90) { ret = 270; }
+	if ((angle > 90) && (angle < 135)) { ret = 270 - (angle - 90); }
+	if (angle == 135) { ret = 225; }
+	if ((angle > 135) && (angle > 180)) { ret = 180 - (angle - 180); }
+	if (ret == 1000) { ret = angle; }
+	return ret;
+}
+
+function bounceBottom(angle)
+{
+	let ret = 1000;
+	if ((angle < 360) && (angle > 315)) { ret = 360 - angle; }
+	if (angle == 315) { ret = 45; }
+	if ((angle < 315) && (angle > 270)) { ret = 90 - (angle - 270); }
+	if (angle == 270) { ret = 90; }
+	if ((angle < 270) && (angle > 225)) { ret = 90 + (270 - angle); }
+	if (angle == 225) { ret = 135; }
+	if ((angle < 225) && (angle > 180)) { ret = 180 - (angle - 180); }
+	if (ret == 1000) { ret = angle; }
+	return ret;
 }
