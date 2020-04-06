@@ -41,7 +41,8 @@ function startgame()
 	/* Set up a canvas */
 	let GameCanvas = D.createElement('canvas');
 	GameCanvas.setAttribute("id", "arena");
-	GameCanvas.setAttribute("class", "uberorbs-game");
+	GameCanvas.setAttribute("width", ScreenWidth + "px");
+	GameCanvas.setAttribute("height", ScreenHeight + "px");
 	GameArea.appendChild(GameCanvas);
 
 	/* Game Init Form_Load */
@@ -93,15 +94,14 @@ function PlayGame()
 	{
 		TotalOrbs = 50;
 	}
-	CreateOrbs(TotalOrbs)
+	CreateOrbs(TotalOrbs);
 	ShowOrbs();
 	setTimeout(MoveOrbs, 50); /* 20 refreshes per second */
 }
 
-// TODO
 function CreateOrbs(count_of_orbs)
 {
-	let x = 0;
+	let x = 0, y = 0;
 	let OrbColliding = false;
 	console.log("CreateOrbs(" + count_of_orbs + ")");
 	TotalOrbs = count_of_orbs; /* Should be obviously set, but just to make sure we set it again */
@@ -115,7 +115,9 @@ function CreateOrbs(count_of_orbs)
 			Angle: 0,
 			Speed: 0,
 			Radius: 0,
-			Color: 0,
+			clrRed: 0,
+			clrGreen: 0,
+			clrBlue: 0,
 			State: 0, /* 0=dead, 1=mini, 2=growing, 3=big (uses life), 4=shrinking */
 			Life: 0
 		};
@@ -129,14 +131,22 @@ function CreateOrbs(count_of_orbs)
 			Orbs[x].Radius = OrbRadius;
 			if (x > 0)
 			{
-			// TODO: Collsion detection
+				for (y = 0; y < x; y++)
+				{
+					if (OrbCollision(Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius + 1, Orbs[y].XCoord, Orbs[y].YCoord, Orbs[y].Radius + 1))
+					{
+						OrbColliding = true;
+					}
+				}
 			}
 		} while (OrbColliding == true);
 		do {
 			Orbs[x].Angle = Math.floor(Math.random() * 359);
 		} while ((Orbs[x].Angle % 90) == 0);
 		Orbs[x].Speed = 3;
-		Orbs[x].Color = Math.floor(Math.random() * 16777216); /* 24-bit RGB color */
+		Orbs[x].clrRed = Math.floor(Math.random() * 256); /* 24-bit RGB color */
+		Orbs[x].clrGreen = Math.floor(Math.random() * 256); /* 24-bit RGB color */
+		Orbs[x].clrBlue = Math.floor(Math.random() * 256); /* 24-bit RGB color */
 		Orbs[x].State = 1;
 		Orbs[x].Life = 21;
 		console.log("Orb: " + Orbs[x]);
@@ -147,10 +157,56 @@ function CreateOrbs(count_of_orbs)
 	return;
 }
 
-// TODO
+function OrbCollision(x1, y1, r1, x2, y2, r2)
+{
+	let OrbDist = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+	if ((r1 + r2) >= OrbDist)
+	{
+		return true;
+	}
+	return false;
+}
+
 function ShowOrbs()
 {
 	console.log("ShowOrbs()");
+	let arena = D.getElementById('arena');
+	// background is black
+	let bg = arena.getContext("2d");
+	bg.rect(0, 0, ScreenWidth,ScreenHeight);
+	bg.fillStyle = 'black';
+	bg.fill();
+
+	DeadOrbs = 0;
+	let x = 0;
+	for (x = 0; x < TotalOrbs; x++)
+	{
+		if (Orbs[x].Radius > 0)
+		{
+			canvasCircle(arena, Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius, Orbs[x].clrRed, Orbs[x].clrGreen, Orbs[x].clrBlue);
+		}
+		if (Orbs[x].State != 1)
+		{
+			DeadOrbs++;
+		}
+	}
+	if (Explosive.DidClick == true)
+	{
+		canvasCircle(arena, Explosive.XCoord, Explosive.YCoord, Explosive.Radius, 255, 255, 255);
+	}
+	return;
+}
+
+function canvasCircle(canvas, x, y, radius, clrRed, clrGreen, clrBlue)
+{
+	let circle = canvas.getContext("2d");
+	circle.beginPath();
+	circle.arc(x, y, radius, 0, 2 * Math.PI);
+	circle.fillStyle = "rgb(" + clrRed + "," + clrGreen + "," + clrBlue + ")";
+	circle.strokeStyle = "rgb(" + clrRed + "," + clrGreen + "," + clrBlue + ")";
+	circle.lineWidth = 0;
+	circle.fill();
+	circle.stroke();
 	return;
 }
 
