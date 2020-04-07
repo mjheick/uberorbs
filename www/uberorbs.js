@@ -53,6 +53,10 @@ function startgame()
 	}
 	/* PlaySound 4 */
 
+	/* Hook the clicker/toucher */
+	let a = D.getElementById('arena');
+	a.addEventListener("click", arena_Click, true);
+
 	StartNewGame();
 }
 
@@ -214,8 +218,7 @@ function canvasCircle(canvas, x, y, radius, clrRed, clrGreen, clrBlue)
 /* Some timer function */
 function MoveOrbs()
 {
-	console.log("MoveOrbs()");
-	let x = 0;
+	let x = 0, y = 0;
 	for (x = 0; x < TotalOrbs; x++)
 	{
 		if (Orbs[x].State == 1)
@@ -240,12 +243,116 @@ function MoveOrbs()
 				Orbs[x].Angle = bounceBottom(Orbs[x].Angle);
 			}
 		}
+		if (Orbs[x].State == 2)
+		{
+			Orbs[x].Radius = Orbs[x].Radius + 2;
+			if (Orbs[x].Radius >= 40)
+			{
+				Orbs[x].State = 3;
+			}
+		}
+		if (Orbs[x].State == 3)
+		{
+			Orbs[x].Life = Orbs[x].Life - 1;
+			if (Orbs[x].Life <= 0)
+			{
+				Orbs[x].State = 4;
+			}
+		}
+		if (Orbs[x].State == 4)
+		{
+			Orbs[x].Radius = Orbs[x].Radius - 5;
+			if (Orbs[x].Radius <= 0)
+			{
+				Orbs[x].State = 0;
+			}
+		}
 	}
 
+	if (Explosive.DidClick == true)
+	{
+		if ((Explosive.Radius < 40) && (Explosive.Radius != 0) && (Explosive.Life > 0))
+		{
+			Explosive.Radius = Explosive.Radius + 2;
+		}
+		else
+		{
+			if (Explosive.Life == 0)
+			{
+				if (Explosive.Radius > 0)
+				{
+					Explosive.Radius = Explosive.Radius - 5;
+				}
+			}
+			else
+			{
+				Explosive.Life = Explosive.Life - 1;
+			}
+		}
+
+		if (Explosive.Radius > 0)
+		{
+			for (x = 0; x < TotalOrbs; x++)
+			{
+				if (Orbs[x].State == 1)
+				{
+					if (OrbCollision(Explosive.XCoord, Explosive.YCoord, Explosive.Radius, Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius))
+					{
+						Orbs[x].State = 2;
+						// PlaySound 1
+					}
+				}
+			}
+		}
+
+		for (x = 0; x < (TotalOrbs - 1); x++)
+		{
+			for (y = (x+1); y < TotalOrbs; y++)
+			{
+				if ((Orbs[x].State == 1) && (Orbs[y].State > 1))
+				{
+					if (OrbCollision(Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius, Orbs[y].XCoord, Orbs[y].YCoord, Orbs[y].Radius))
+					{
+						Orbs[x].State = 2;
+						// PlaySound 1
+					}
+				}
+				else if ((Orbs[y].State == 1) && (Orbs[x].State > 1))
+				{
+					if (OrbCollision(Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius, Orbs[y].XCoord, Orbs[y].YCoord, Orbs[y].Radius))
+					{
+						Orbs[y].State = 2;
+						// PlaySound 1
+					}
+				}
+			}
+		}
+	}
+
+	/* Some bounce/deflection routine */
+
 	ShowOrbs();
+
+	/* Update scoreboard somewhere */
+
+	/* Endgame check */
+
 	/* If we're still in the game we can call ourselves back in 50ms */
 	setTimeout(MoveOrbs, 50);
 	return;
+}
+
+function arena_Click(event)
+{
+	console.log("arena_Click()");
+
+	if (Explosive.DidClick == false)
+	{
+		// PlaySound 1
+		Explosive.DidClick = true;
+		Explosive.XCoord = event.offsetX;
+		Explosive.YCoord = event.offsetY;
+	}
 }
 
 function SinOrb(angle)
