@@ -40,10 +40,23 @@ function startgame()
 	GameArea.innerHTML = "";
 	/* Set up a canvas */
 	let GameCanvas = D.createElement('canvas');
-	GameCanvas.setAttribute("id", "arena");
-	GameCanvas.setAttribute("width", ScreenWidth + "px");
-	GameCanvas.setAttribute("height", ScreenHeight + "px");
+	GameCanvas.setAttribute('id', "arena");
+	GameCanvas.setAttribute('width', ScreenWidth + 'px');
+	GameCanvas.setAttribute('height', ScreenHeight + 'px');
 	GameArea.appendChild(GameCanvas);
+
+	/* Set up audio */
+	let AudioDiv = D.createElement('div');
+	AudioDiv.setAttribute('style', 'display:none;');
+	let sounds = ['hit.wav', 'ok.wav', 'nope.wav', 'ouvrez.wav']; /* Sounds 1, 2, 3, 4 */
+	for (let x = 0; x < sounds.length; x++)
+	{
+		let Audio = D.createElement('audio');
+		Audio.setAttribute('id', 'sound-' + x);
+		Audio.setAttribute('src', sounds[x]);
+		AudioDiv.appendChild(Audio);
+	}
+	GameArea.appendChild(AudioDiv);
 
 	/* Game Init Form_Load */
 	TotalOrbs = 0;
@@ -51,13 +64,26 @@ function startgame()
 	{
 		GameLevelProgress[x] = false;
 	}
-	/* PlaySound 4 */
+	playSound("3"); /* base index in VB6 is 1, java is 0 */
 
 	/* Hook the clicker/toucher */
 	let a = D.getElementById('arena');
 	a.addEventListener("click", arena_Click, true);
 
 	StartNewGame();
+}
+
+function playSound(index)
+{
+	let sound = D.getElementById('sound-' + index);
+	if (sound.paused || sound.ended)
+	{
+		sound.play();
+	}
+	else
+	{
+		sound.currentTime = 0;
+	}
 }
 
 function StartNewGame()
@@ -299,7 +325,7 @@ function MoveOrbs()
 					if (OrbCollision(Explosive.XCoord, Explosive.YCoord, Explosive.Radius, Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius))
 					{
 						Orbs[x].State = 2;
-						// PlaySound 1
+						playSound("0");
 					}
 				}
 			}
@@ -314,7 +340,7 @@ function MoveOrbs()
 					if (OrbCollision(Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius, Orbs[y].XCoord, Orbs[y].YCoord, Orbs[y].Radius))
 					{
 						Orbs[x].State = 2;
-						// PlaySound 1
+						playSound("0");
 					}
 				}
 				else if ((Orbs[y].State == 1) && (Orbs[x].State > 1))
@@ -322,7 +348,7 @@ function MoveOrbs()
 					if (OrbCollision(Orbs[x].XCoord, Orbs[x].YCoord, Orbs[x].Radius, Orbs[y].XCoord, Orbs[y].YCoord, Orbs[y].Radius))
 					{
 						Orbs[y].State = 2;
-						// PlaySound 1
+						playSound("0");
 					}
 				}
 			}
