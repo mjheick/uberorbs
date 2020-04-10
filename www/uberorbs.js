@@ -4,16 +4,10 @@
  */
 
 /**
- * global shortcuts
+ * globals
  */
 var D = document;
-var W = window;
-
-/**
- * global variables and types
- */
 var GameArea = D.getElementById('game-area');
-
 var Explosive = {
 	DidClick: false,
 	XCoord: 0,
@@ -29,9 +23,11 @@ var Orbs = [];
 var GameLevel = 0; /* Placeholder for whatever is checked in a menu system */
 var GameLevelProgress = []; /* Placeholder for whatever is checked in a menu system */
 
-var ScreenWidth = 550;
-var ScreenHeight = 400;
-var OrbRadius = 7;
+var Graphics = {
+	ScreenWidth: 550,
+	ScreenHeight: 400,
+	OrbRadius: 7
+};
 
 function startgame()
 {
@@ -40,10 +36,19 @@ function startgame()
 	GameArea.innerHTML = "";
 	/* Set up a canvas */
 	let GameCanvas = D.createElement('canvas');
-	GameCanvas.setAttribute('id', "arena");
-	GameCanvas.setAttribute('width', ScreenWidth + 'px');
-	GameCanvas.setAttribute('height', ScreenHeight + 'px');
+	GameCanvas.setAttribute('id', 'arena');
+	GameCanvas.setAttribute('width', Graphics.ScreenWidth + 'px');
+	GameCanvas.setAttribute('height', Graphics.ScreenHeight + 'px');
 	GameArea.appendChild(GameCanvas);
+
+	/* Need a horizontal scoreboard */
+	let scoreboardDiv = D.createElement('div');
+	let scoreboard = D.createElement('input');
+	scoreboard.setAttribute('id', 'scoreboard');
+	scoreboard.setAttribute('style', 'text-align: center; width: ' + Graphics.ScreenWidth + 'px;');
+	scoreboard.setAttribute('value', '');
+	scoreboardDiv.appendChild(scoreboard);
+	GameArea.appendChild(scoreboardDiv);
 
 	/* Set up audio */
 	let AudioDiv = D.createElement('div');
@@ -104,7 +109,7 @@ function LoadLevel(level)
 	let OrbMax = [5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55, 60]; /* How many orbs to put on the screen */
 	let getOrbs = [1, 2, 3, 5, 7, 10, 15, 21, 27, 33, 44, 55]; /* How many orbs to get to complete the level */
 	TotalOrbs = OrbMax[level - 1];
-	Toget = getOrbs[level - 1];
+	ToGet = getOrbs[level - 1];
 	for (x = 1; x <= 12; x++)
 	{
 		GameLevelProgress[x] = false;
@@ -124,7 +129,7 @@ function PlayGame()
 	{
 		TotalOrbs = 50;
 	}
-	CreateOrbs(100); // CreateOrbs(TotalOrbs);
+	CreateOrbs(TotalOrbs); // CreateOrbs(TotalOrbs);
 	ShowOrbs();
 	setTimeout(MoveOrbs, 50); /* 20 refreshes per second */
 }
@@ -156,9 +161,9 @@ function CreateOrbs(count_of_orbs)
 	{
 		do {
 			OrbColliding = false;
-			Orbs[x].XCoord = Math.floor(Math.random() * ScreenWidth) + 1;
-			Orbs[x].YCoord = Math.floor(Math.random() * ScreenHeight) + 1;
-			Orbs[x].Radius = OrbRadius;
+			Orbs[x].XCoord = Math.floor(Math.random() * Graphics.ScreenWidth) + 1;
+			Orbs[x].YCoord = Math.floor(Math.random() * Graphics.ScreenHeight) + 1;
+			Orbs[x].Radius = Graphics.OrbRadius;
 			if (x > 0)
 			{
 				for (y = 0; y < x; y++)
@@ -174,9 +179,9 @@ function CreateOrbs(count_of_orbs)
 			Orbs[x].Angle = Math.floor(Math.random() * 359);
 		} while ((Orbs[x].Angle % 90) == 0);
 		Orbs[x].Speed = 3;
-		Orbs[x].clrRed = Math.floor(Math.random() * 256); /* 24-bit RGB color */
-		Orbs[x].clrGreen = Math.floor(Math.random() * 256); /* 24-bit RGB color */
-		Orbs[x].clrBlue = Math.floor(Math.random() * 256); /* 24-bit RGB color */
+		Orbs[x].clrRed = Math.floor(Math.random() * 191) + 64; /* 24-bit RGB color */
+		Orbs[x].clrGreen = Math.floor(Math.random() * 191) + 64; /* 24-bit RGB color */
+		Orbs[x].clrBlue = Math.floor(Math.random() * 191) + 64; /* 24-bit RGB color */
 		Orbs[x].State = 1;
 		Orbs[x].Life = 21;
 		console.log("Orb: " + Orbs[x]);
@@ -203,7 +208,7 @@ function ShowOrbs()
 	let arena = D.getElementById('arena');
 	// background is black
 	let bg = arena.getContext("2d");
-	bg.rect(0, 0, ScreenWidth,ScreenHeight);
+	bg.rect(0, 0, Graphics.ScreenWidth, Graphics.ScreenHeight);
 	bg.fillStyle = 'black';
 	bg.fill();
 
@@ -256,16 +261,16 @@ function MoveOrbs()
 				Orbs[x].XCoord = 1;
 				Orbs[x].Angle = bounceLeft(Orbs[x].Angle);
 			}
-			if (Orbs[x].XCoord >= ScreenWidth) {
-				Orbs[x].XCoord = ScreenWidth - 1;
+			if (Orbs[x].XCoord >= Graphics.ScreenWidth) {
+				Orbs[x].XCoord = Graphics.ScreenWidth - 1;
 				Orbs[x].Angle = bounceRight(Orbs[x].Angle);
 			}
 			if (Orbs[x].YCoord <= 0) {
 				Orbs[x].YCoord = 1;
 				Orbs[x].Angle = bounceTop(Orbs[x].Angle);
 			}
-			if (Orbs[x].YCoord >= ScreenHeight) {
-				Orbs[x].YCoord = ScreenHeight - 1;
+			if (Orbs[x].YCoord >= Graphics.ScreenHeight) {
+				Orbs[x].YCoord = Graphics.ScreenHeight - 1;
 				Orbs[x].Angle = bounceBottom(Orbs[x].Angle);
 			}
 		}
@@ -360,8 +365,108 @@ function MoveOrbs()
 	ShowOrbs();
 
 	/* Update scoreboard somewhere */
+	if (TotalOrbs > 0)
+	{
+		let scoreboardtext = '';
+		let scoreboard = D.getElementById('scoreboard');
+		scoreboardtext = DeadOrbs + ' / ' + parseInt(DeadOrbs / (TotalOrbs + 1) * 100) + '%';
+		if (ToGet - DeadOrbs < 1)
+		{
+			scoreboardtext = scoreboardtext + ' -- Level Complete';
+		}
+		else
+		{
+			scoreboardtext = scoreboardtext + ' -- Need ' + (ToGet - DeadOrbs) + ' to complete level';
+		}
+		scoreboard.value = scoreboardtext;
+	}
 
 	/* Endgame check */
+	if (Explosive.DidClick && (Explosive.Radius < 1))
+	{
+		y = 0;
+		for (x = 0; x < TotalOrbs; x++)
+		{
+			if ((Orbs[x].State == 2) || (Orbs[x].State == 3) || (Orbs[x].State == 4))
+			{
+				y++;
+			}
+		}
+		if (y == 0)
+		{
+			if (false)
+			{
+				// TODO: Gameover?
+				for (x = 0; x < TotalOrbs; x++)
+				{
+					Orbs[x].clrRed = 255;
+					Orbs[x].clrGreen = 255;
+					Orbs[x].clrBlue = 255;
+				}
+				ShowOrbs();
+				return;
+			}
+			else
+			{
+				if (DeadOrbs >= ToGet)
+				{
+					y = 0;
+					for (x = 0; x < TotalOrbs; x++)
+					{
+						if (Orbs[x].State == 1)
+						{
+							y++;
+							Orbs[x].State = 2;
+							Orbs[x].Life = 11;
+						}
+					}
+					if (y == 0)
+					{
+						for (x = 0; x < TotalOrbs; x++)
+						{
+							Orbs[x].clrRed = 0;
+							Orbs[x].clrRed = 255;
+							Orbs[x].clrBlue = 0;
+						}
+						ShowOrbs();
+						// TODO: Some delay before advancing level?
+						GameLevel++;
+						if (GameLevel < 12)
+						{
+							LoadLevel(GameLevel);
+							//PlayGame();
+							return;
+						}
+						else
+						{
+							// you beat the game
+							return;
+						}
+					}
+					else
+					{
+						playSound(1);
+					}
+				}
+				else
+				{
+					for (x = 0; x < TotalOrbs; x++)
+					{
+						Orbs[x].clrRed = 255;
+						Orbs[x].clrGreen = 0;
+						Orbs[x].clrBlue = 0;
+					}
+					playSound(2);
+					ShowOrbs();
+					// TODO: Some delay before restaring level
+					PlayGame();
+					return;
+				}
+			}
+
+		}
+
+	}
 
 	/* If we're still in the game we can call ourselves back in 50ms */
 	setTimeout(MoveOrbs, 50);
@@ -374,7 +479,7 @@ function arena_Click(event)
 
 	if (Explosive.DidClick == false)
 	{
-		// PlaySound 1
+		playSound("0");
 		Explosive.DidClick = true;
 		Explosive.XCoord = event.offsetX;
 		Explosive.YCoord = event.offsetY;
