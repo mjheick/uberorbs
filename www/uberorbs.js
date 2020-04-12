@@ -31,7 +31,7 @@ var Graphics = {
 
 function startgame()
 {
-	console.log("startgame()");
+	D.getElementById("button-area").style.display = "none";
 	/* Clear the screen */
 	GameArea.innerHTML = "";
 	/* Set up a canvas */
@@ -69,8 +69,7 @@ function startgame()
 	{
 		GameLevelProgress[x] = false;
 	}
-	playSound("3"); /* base index in VB6 is 1, java is 0 */
-
+	
 	/* Hook the clicker/toucher */
 	let a = D.getElementById('arena');
 	a.addEventListener("click", arena_Click, true);
@@ -93,13 +92,12 @@ function playSound(index)
 
 function StartNewGame()
 {
-	console.log("StartNewGame()");
+	playSound("3");
 	LoadLevel(1);
 }
 
 function LoadLevel(level)
 {
-	console.log("LoadLevel(" + level + ")");
 	let x = 0;
 	if ((level < 1) || (level > 12))
 	{
@@ -124,7 +122,6 @@ function LoadLevel(level)
 
 function PlayGame()
 {
-	console.log("PlayGame()");
 	if (TotalOrbs == 0)
 	{
 		TotalOrbs = 50;
@@ -138,7 +135,6 @@ function CreateOrbs(count_of_orbs)
 {
 	let x = 0, y = 0;
 	let OrbColliding = false;
-	console.log("CreateOrbs(" + count_of_orbs + ")");
 	TotalOrbs = count_of_orbs; /* Should be obviously set, but just to make sure we set it again */
 	/* Create TotalOrbs orb objects */
 	Orbs = [];
@@ -183,12 +179,11 @@ function CreateOrbs(count_of_orbs)
 		Orbs[x].clrGreen = Math.floor(Math.random() * 191) + 64; /* 24-bit RGB color */
 		Orbs[x].clrBlue = Math.floor(Math.random() * 191) + 64; /* 24-bit RGB color */
 		Orbs[x].State = 1;
-		Orbs[x].Life = 21;
-		console.log("Orb: " + Orbs[x]);
+		Orbs[x].Life = 21; /* How long an Orb stays big */
 	}
 	Explosive.DidClick = false;
 	Explosive.Radius = 2;
-	Explosive.Life = 20;
+	Explosive.Life = 20;  /* How long the Explosive stays big */
 	return;
 }
 
@@ -204,7 +199,6 @@ function OrbCollision(x1, y1, r1, x2, y2, r2)
 
 function ShowOrbs()
 {
-	console.log("ShowOrbs()");
 	let arena = D.getElementById('arena');
 	// background is black
 	let bg = arena.getContext("2d");
@@ -369,7 +363,7 @@ function MoveOrbs()
 	{
 		let scoreboardtext = '';
 		let scoreboard = D.getElementById('scoreboard');
-		scoreboardtext = DeadOrbs + ' / ' + parseInt(DeadOrbs / (TotalOrbs + 1) * 100) + '%';
+		scoreboardtext = DeadOrbs + ' / ' + parseInt(DeadOrbs / TotalOrbs * 100) + '%';
 		if (ToGet - DeadOrbs < 1)
 		{
 			scoreboardtext = scoreboardtext + ' -- Level Complete';
@@ -384,6 +378,7 @@ function MoveOrbs()
 	/* Endgame check */
 	if (Explosive.DidClick && (Explosive.Radius < 1))
 	{
+		/* Check for orbs still in animation */
 		y = 0;
 		for (x = 0; x < TotalOrbs; x++)
 		{
@@ -392,80 +387,58 @@ function MoveOrbs()
 				y++;
 			}
 		}
+		/* No orbs in animation, entire level dead now. We can do actual endgame */
 		if (y == 0)
 		{
-			if (false)
+			if (DeadOrbs >= ToGet)
 			{
-				// TODO: Gameover?
+				/* Winning Condition */
+				y = 0;
 				for (x = 0; x < TotalOrbs; x++)
 				{
-					Orbs[x].clrRed = 255;
-					Orbs[x].clrGreen = 255;
-					Orbs[x].clrBlue = 255;
-				}
-				ShowOrbs();
-				return;
-			}
-			else
-			{
-				if (DeadOrbs >= ToGet)
-				{
-					y = 0;
-					for (x = 0; x < TotalOrbs; x++)
+					if (Orbs[x].State == 1)
 					{
-						if (Orbs[x].State == 1)
-						{
-							y++;
-							Orbs[x].State = 2;
-							Orbs[x].Life = 11;
-						}
+						y++;
+						Orbs[x].State = 2;
+						Orbs[x].Life = 11;
 					}
-					if (y == 0)
+				}
+				if (y == 0)
+				{
+					/* All orbs are dead. Advance the level */
+					GameLevel++;
+					if (GameLevel < 12)
 					{
-						for (x = 0; x < TotalOrbs; x++)
-						{
-							Orbs[x].clrRed = 0;
-							Orbs[x].clrRed = 255;
-							Orbs[x].clrBlue = 0;
-						}
-						ShowOrbs();
-						// TODO: Some delay before advancing level?
-						GameLevel++;
-						if (GameLevel < 12)
-						{
-							LoadLevel(GameLevel);
-							//PlayGame();
-							return;
-						}
-						else
-						{
-							// you beat the game
-							return;
-						}
+						LoadLevel(GameLevel);
+						return;
 					}
 					else
 					{
-						playSound(1);
+						console.log("endgame!!!");
+						// TODO: Celebration or something
+						return;
 					}
 				}
 				else
 				{
-					for (x = 0; x < TotalOrbs; x++)
-					{
-						Orbs[x].clrRed = 255;
-						Orbs[x].clrGreen = 0;
-						Orbs[x].clrBlue = 0;
-					}
-					playSound(2);
-					ShowOrbs();
-					// TODO: Some delay before restaring level
-					PlayGame();
-					return;
+					playSound(1);
 				}
 			}
-
+			else
+			{
+				/* Losing Condition */
+				for (x = 0; x < TotalOrbs; x++)
+				{
+					Orbs[x].clrRed = 255;
+					Orbs[x].clrGreen = 0;
+					Orbs[x].clrBlue = 0;
+				}
+				playSound(2);
+				ShowOrbs();
+				setTimeout(PlayGame, 2000);
+				return;
+			}
 		}
-
 	}
 
 	/* If we're still in the game we can call ourselves back in 50ms */
@@ -475,8 +448,6 @@ function MoveOrbs()
 
 function arena_Click(event)
 {
-	console.log("arena_Click()");
-
 	if (Explosive.DidClick == false)
 	{
 		playSound("0");

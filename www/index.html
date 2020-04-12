@@ -2,11 +2,56 @@
 <html>
 	<head>
 		<title>Uberorbs!</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="shortcut icon" href="orbs.ico" type="image/x-icon" />
+		<style>
+body, html, div, input {
+	border: 0;
+	margin: 0;
+	padding: 0;
+}
+#button-area-button {
+	height: 100%;
+	width: 100%;
+}
+@media only screen and (min-width: 601px) {
+	body {
+		background-color: white;
+		color: black;
+	}
+	#rotate-screen {
+		display: none;
+	}
+	#button-area {
+		display: block;
+	}
+	#game-area {
+		display: block;
+	}
+}
+@media only screen and (max-width: 600px) {
+	body {
+		background-color: black;
+		color: white;
+	}
+	#rotate-screen {
+		display: block;
+	}
+	#button-area {
+		display: none;
+	}
+	#game-area {
+		display: none;
+	}
+}
+		</style>
 	</head>
 	<body>
+		<div id="rotate-screen">
+			<span style="text-align: center; font-weight: bold;">Rotate your phone or provide more width to the window to play</span>
+		</div>
 		<div id="button-area">
-			<button onclick="startgame();">Start Game</button>
+			<button id='button-area-button' onclick="startgame();">Start Game</button>
 		</div>
 		<div id="game-area"></div>
 	</body>
